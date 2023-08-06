@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt')
-const { loginService } = require('../services/auth.service')
+const { loginService, generateToken } = require('../services/auth.service')
 
 
 const login = async (req, res) => {
@@ -18,7 +18,9 @@ const login = async (req, res) => {
         return res.status(404).send({message: "User or password not found"})
     }
 
-    res.send("Login OK")} catch(err) {
+    const token = generateToken(user.id, user.email)
+
+    res.send({token})} catch(err) {
         res.status(500).send(err.message)
     }
 }
