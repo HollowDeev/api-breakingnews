@@ -129,9 +129,68 @@ const findById = async (req, res) => {
     }
 }
 
+const searchByTitle = async (req, res) => {
+    try {
+
+        const { title } = req.query
+        const news = await newsService.searchByTitleService(title)
+
+        if(news.lenght === 0 ) {
+            return res.status(400).send({message: "There are no news with this title"})
+        }
+
+        res.status(200).send({
+            totalOfResults: news.length,
+            results: news.map(newsItem => ({
+                id: newsItem._id,
+                title: newsItem.title,
+                text: newsItem.text,
+                banner: newsItem.banner,
+                likes: newsItem.likes,
+                comments: newsItem.comments,
+                name : newsItem.user.name,
+                username: newsItem.user.username,
+                userAvatar: newsItem.user.avatar
+            }))
+        })
+
+    }catch(err) {
+        res.status(500).send({message: err.message})
+    }
+}
+
+const byUser = async (req, res) => {
+  try{
+
+    const id = req.userId
+
+    const news = await newsService.byUserService(id)
+
+    res.status(200).send({
+        totalOfResults: news.length,
+        results: news.map(newsItem => ({
+            id: newsItem._id,
+            title: newsItem.title,
+            text: newsItem.text,
+            banner: newsItem.banner,
+            likes: newsItem.likes,
+            comments: newsItem.comments,
+            name : newsItem.user.name,
+            username: newsItem.user.username,
+            userAvatar: newsItem.user.avatar
+        }))
+    })
+
+  }catch(err) {
+        res.status(500).send({message: err.message})
+    }
+}
+
 module.exports = {
     create,
     findAll,
     topNews,
-    findById
+    findById,
+    searchByTitle,
+    byUser
 }
