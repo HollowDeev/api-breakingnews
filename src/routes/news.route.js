@@ -5,5 +5,7 @@ const authMiddleware = require('../middlewares/auth.middleware')
 
 router.post('/',authMiddleware.verify, newsController.create)
 router.get('/', newsController.findAll)
+router.get('/top', newsController.topNews)
+router.get('/:id', newsController.findById)
 
 module.exports = router

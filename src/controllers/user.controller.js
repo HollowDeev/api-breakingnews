@@ -1,5 +1,7 @@
 const userService = require('../services/user.service')
 
+const bcrypt = require("bcrypt")
+
 const create = async (req, res) => {
 
     try{
@@ -58,7 +60,9 @@ const update = async (req, res) => {
 
     try{const id = req.id 
 
-    const {name, username, email, password, avatar, background} = req.body
+    let {name, username, email, password, avatar, background} = req.body
+
+    password = await bcrypt.hash(password, 10)
 
     if(!name && !username && !email && !password && !avatar && !background) {
         res.status(400).send( {message:"Submit at least one fields for update"} )
