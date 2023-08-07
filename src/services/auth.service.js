@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken')
 const loginService = (email) => 
     User.findOne({email: email}).select("+password")
 
-const generateToken = (id, email) => jwt.sign({id: id, email: email}, process.env.SECRET_JWT, {expiresIn: 86400})
+const generateToken = (id, email) => jwt.sign({id: id}, process.env.SECRET_JWT, {expiresIn: 86400})
 
 module.exports = {
     loginService,

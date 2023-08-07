@@ -10,7 +10,7 @@ const create = async (req, res) => {
         } 
 
         await newsService.createService({
-            title, text, banner, user:"64ce863383adf025bcc91f1f"
+            title, text, banner, user: req.userId
         })
 
         res.status(201).send("criar noticia")
