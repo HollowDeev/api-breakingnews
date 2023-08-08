@@ -1,12 +1,12 @@
 const express = require('express')
 const app = express()
-const connectDatabase = require('./src/database/db')
+const connectDatabase = require('./database/db')
 const dotenv = require('dotenv').config()
 
-const authRoute = require('./src/routes/auth.route')
-const userRoute = require('./src/routes/user.route')
-const newsRoute = require('./src/routes/news.route')
-const swaggerRoute = require('./src/routes/swegger.route')
+const authRoute = require('./routes/auth.route')
+const userRoute = require('./routes/user.route')
+const newsRoute = require('./routes/news.route')
+const swaggerRoute = require('./routes/swegger.route')
 
 const port = process.env.PORT || 3333
 
