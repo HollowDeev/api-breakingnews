@@ -13,7 +13,7 @@ const create = async (req, res) => {
             title, text, banner, user: req.userId
         })
 
-        res.status(201).send("news created successfully")
+        res.status(201).send({message: "news created successfully"})
         
     }catch(err) {
         res.status(500).send({message: err.message})
@@ -183,6 +183,115 @@ const byUser = async (req, res) => {
 
   }catch(err) {
         res.status(500).send({message: err.message})
+  }
+}
+
+const update = async (req, res) => {
+    try {
+
+        const { title, text, banner } = req.body 
+        const id = req.params.id
+
+        if(!title && !banner && !text){
+           res.status(400).send({message: "Submit at least one field to update the post"})
+        }
+
+        const news = await newsService.findByIdService(id)
+
+        if(news.user.id != req.userId){
+            res.status(400).send({message: "You didn't update this post"})
+        } 
+
+        await newsService.updateService(id, title, text, banner)
+
+        return res.send({message: "Post successfully updated!"})
+
+    }catch(err) {
+        res.status(500).send({message: err.message})
+    }
+}
+
+const erase = async (req, res) => {
+    try {
+        const id = req.params.id
+
+        const news = await newsService.findByIdService(id)
+
+        if(news.user.id != req.userId){
+            res.status(400).send({message: "You didn't delete this post"})
+        } 
+
+        await newsService.eraseService(id)
+
+        return res.status(200).send({message: "News delete successfully"})
+
+    }catch(err) {
+        res.status(500).send({message: err.message})
+    }
+}
+
+const likeNews = async (req,res) => {
+    try {
+
+        const newsId = req.params.id
+        const userId = req.userId
+
+        const newsLiked = await newsService.likeNewsService(newsId, userId)
+
+        if(!newsLiked){
+            await newsService.deleteLikeNewsService(newsId, userId)
+
+            return res.status(200).send({message: "Like successfully removed"})
+        }
+
+        return res.status(200).send({message: "Like done successfully"})
+
+    }catch(err) {
+        res.status(500).send({message: err.message})
+    }
+}
+
+const addComment = async (req, res) => {
+
+    try{
+
+        const newsId = req.params.id 
+        const userId = req.userId
+        const { comment } = req.body
+
+        if(!comment){
+            return res.status(400).send({message: "Write a message to comment"})
+        }
+
+        await newsService.addCommentService(newsId, userId, comment)
+
+        return res.status(200).send({message:"Comment successfully completed"})
+
+    }catch(err) {
+        res.status(500).send({message: err.message})
+    }
+}
+
+
+const deleteComment = async (req, res) => {
+
+    try{
+
+        const { newsId, commentId } = req.params
+        const userId = req.userId
+
+        const news = await newsService.deleteCommentService(newsId, userId, commentId)
+
+        const commentToDelete = news.comments.find(comment => comment.commentId == commentId)
+
+        if(commentToDelete.userId != userId){
+            return res.status(400).send({message: "You didn't delete this comment"})
+        }
+
+        return res.status(200).send({message:"Comment successfully removed"})
+
+    }catch(err) {
+        res.status(500).send({message: err.message})
     }
 }
 
@@ -192,5 +301,10 @@ module.exports = {
     topNews,
     findById,
     searchByTitle,
-    byUser
+    byUser,
+    update,
+    erase,
+    likeNews,
+    addComment,
+    deleteComment
 }

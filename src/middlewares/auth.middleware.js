@@ -7,7 +7,7 @@ const verify = (req, res, next) => {
     try{const { authorization } = req.headers
 
     if (!authorization){
-        res.status(401).send({message: 'missing authorization'})
+        return res.status(401).send({message: 'missing authorization'})
     }
 
     const parts = authorization.split(' ')
@@ -15,7 +15,7 @@ const verify = (req, res, next) => {
     const [schema, token] = parts
 
     if(parts.length != 2){
-        res.status(401).send({message: "authorization headers incomplete"})
+        return res.status(401).send({message: "authorization headers incomplete"})
     }
 
     if(schema != 'Bearer') {

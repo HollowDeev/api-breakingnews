@@ -19,12 +19,46 @@ const searchByTitleService = (title) => News.find({
 
 const byUserService = (id) => News.find({user: id}).sort({_id: -1}).populate("user")
 
-module.exports = {
+const updateService = (id, title, text, banner) => News.findOneAndUpdate({_id: id}, {title, text, banner}, {rawResult: true})
+
+const eraseService = (id) => News.findByIdAndDelete(id)
+
+const likeNewsService = (newsId, userId) => News.findOneAndUpdate(
+    {_id: newsId, "likes.userId": {$nin: [userId]}}, 
+    {$push: {likes: {userId, createdAt: new Date()} }}
+)
+
+const deleteLikeNewsService = (newsId, userId) => 
+    News.findOneAndUpdate(
+        {_id: newsId},
+        {$pull: {likes: {userId} }}
+    )
+
+const addCommentService = (newsId, userId, comment) => {
+
+    const commentId = Math.floor(Date.now() * Math.random()).toString(36) 
+
+    return News.findOneAndUpdate({_id: newsId}, {$push: {comments: {commentId, userId, comment, createdAt: new Date() }}})
+}
+
+const deleteCommentService = (newsId, userId, commentId) =>
+    News.findOneAndUpdate(
+        {_id: newsId},
+        {$pull: {comments: {userId, commentId} }}
+    )
+
+module.exports = { 
     createService,
     findService,
     countNews,
     topNewsService,
     findByIdService,
     searchByTitleService,
-    byUserService
-}
+    byUserService,
+    updateService,
+    eraseService,
+    likeNewsService,
+    deleteLikeNewsService,
+    addCommentService,
+    deleteCommentService
+} 
