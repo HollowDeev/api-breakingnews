@@ -1,86 +1,54 @@
-const userService = require('../services/user.service')
+const userService = require("../services/user.service");
 
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcrypt");
 
 const create = async (req, res) => {
+  const body = req.body;
 
-    try{
-        const {name, username, email, password, avatar, background} = req.body
-
-        if(!name || !username || !email || !password || !avatar || !background) {
-            res.status(400).send( {message:"Submit all fields for registration"} )
-        } 
-
-        const user =  await userService.createService(req.body)
-
-        if (!user){
-            return res.status(400).send({message: "Error creating User"})
-        }
-
-        res.status(201).send({
-            message: "User created successfully",
-            
-            user: {
-                id: user._id,
-                name,
-                username,
-                email,
-                avatar,
-                background
-            }
-        })
-   } catch(err) {
-        res.status(500).send({message: err.message})
-   }
-}
+  try {
+    const user = await userService.createService(body);
+    res.status(201).send({ user });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+};
 
 const findAll = async (req, res) => {
-    
-    try{const users = await userService.findAllService()
+  try {
+    const user = await userService.findAllService();
+    res.status(200).send(user);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+};
 
-    if(users.length === 0){
-        return res.status(400).send({ message: "There are no registered users"})
-    }
+const findById = async (req, res) => {
+  try {
+    const id = req.params.id;
 
-    res.send(users)
-    } catch(err) {res.status(500).send({message: err.message})}
-}
+    const user = await userService.findByIdService(id);
 
-const findById = (req, res) => {
-
-    try{const user = req.user
-
-    res.send(user)}
-    catch(err) {
-        res.status(500).send({message: err.message})
-    }
-}
+    res.send(user);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+};
 
 const update = async (req, res) => {
+  let body = req.body;
 
-    try{const id = req.id 
+  try {
+    const teste = await userService.updateService(body, req.userId);
 
-    let {name, username, email, password, avatar, background} = req.body
-
-    password = await bcrypt.hash(password, 10)
-
-    if(!name && !username && !email && !password && !avatar && !background) {
-        res.status(400).send( {message:"Submit at least one fields for update"} )
-    } 
-
-    await userService.updateService(
-        id, name, username, email, password, avatar, background
-    )
-
-    res.send({message: "User successfully updated!"})}
-    catch(err) {
-        res.status(500).send({message: err.message})
-    }
-}
+    res.send({ message: "User successfully updated!" });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+};
 
 module.exports = {
-    create,
-    findAll,
-    findById,
-    update
-}
+  create, 
+  findAll,
+  findById,
+  update,
+};

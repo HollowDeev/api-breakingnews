@@ -3,10 +3,12 @@ const userController = require('../controllers/user.controller')
 
 const {validId, validUser} = require('../middlewares/global.middlewares')
 
+const authMiddleware = require('../middlewares/auth.middleware')
+
 router.post('/', userController.create)
 router.get('/',  userController.findAll)
 router.get('/:id', validId, validUser, userController.findById)
-router.patch('/:id', validId, validUser, userController.update)
+router.patch('/', authMiddleware.verify, userController.update)
 
 
 module.exports = router
