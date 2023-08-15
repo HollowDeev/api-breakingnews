@@ -23,6 +23,7 @@ app.use((req, res, next) => {
 app.use(express.json()) 
 app.use('/user', userRoute)
 app.use('/auth', authRoute)
+// app.use('/news')
 app.use('/news', newsRoute)
 app.use('/doc', swaggerRoute)
 

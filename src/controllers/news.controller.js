@@ -33,7 +33,7 @@ const findAll = async (req, res) => {
     }
 
     if(!offset){
-        offset = 0
+        offset = 1
     }
 
     const news = await newsService.findService(offset, limit)
@@ -133,6 +133,7 @@ const searchByTitle = async (req, res) => {
     try {
 
         const { title } = req.query
+
         const news = await newsService.searchByTitleService(title)
 
         if(news.lenght === 0 ) {

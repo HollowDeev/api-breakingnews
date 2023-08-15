@@ -4,10 +4,10 @@ const newsController = require('../controllers/news.controller')
 const authMiddleware = require('../middlewares/auth.middleware')
 const {validNews} = require('../middlewares/global.middlewares')
 
-router.get('/:id', newsController.findById)
-router.get('/', newsController.findAll)
 router.get('/top', newsController.topNews)
+router.get('/', newsController.findAll)
 router.get('/search', newsController.searchByTitle)
+router.get('/:id', newsController.findById)
 
 router.use(authMiddleware.verify)
 router.post('/', newsController.create)
